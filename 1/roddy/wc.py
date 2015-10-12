@@ -33,7 +33,7 @@ def getwords(vfile):
 		count=1
 		words=0
 		while True:
-			getdata=f.read(50)
+			getdata=f.read(1024)
 			if getdata=="":
 				break
 			newlist = re.split('[ \n\t]',getdata)
