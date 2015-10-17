@@ -6,9 +6,9 @@ import sys
 
 with  open(sys.argv[1],'r') as f:
     start = 0
-    s =  f.read(10)
+    s =  f.read(1024)
     while True:
-        if len(s) == 0:
+        if s == '':
             print start
             break
 
