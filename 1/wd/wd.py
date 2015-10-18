@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 kongsys
 merged first line
 <<<<<<< HEAD
@@ -15,3 +16,6 @@ longpengcheng
 roddy
 qidunhu
 >>>>>>> 105d417d85843be7dce922b74621f07b0729910b
+=======
+jiaoxingrong add lines;^_^
+>>>>>>> f363cb4f041224319c1223ad76adeb6a60056eff
