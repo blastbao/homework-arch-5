@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 merged first line
 <<<<<<< HEAD
 sky
@@ -17,10 +18,18 @@ roddy
 sunhao first line
 >>>>>>> aba2c0a4b4092fd9878a81f39a98f841c096173f
 =======
+=======
+long
+lalalal
+kongsys
+merged first line
+sunhao first line
+>>>>>>> b5445a486c697bbd1b9967303ffc18e87db60d35
 Qian Yukun's modify
 longpengcheng
 roddy
 qidunhu
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 7722354f7460cedb8bdc804199b289ebbb93ffa5
@@ -36,3 +45,9 @@ jiaoxingrong add lines;^_^
 =======
 jiaoxingrong add lines;^_^
 >>>>>>> 4e0781768fd02eaf231fb06b2cd3497cbced8079
+=======
+wenwen
+jiaoxingrong
+longpengcheng
+
+>>>>>>> b5445a486c697bbd1b9967303ffc18e87db60d35
