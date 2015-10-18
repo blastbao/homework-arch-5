@@ -1,5 +1,3 @@
-lalalal
-kongsys
 merged first line
 <<<<<<< HEAD
 add lines by luyidong
