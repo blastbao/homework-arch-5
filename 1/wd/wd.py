@@ -1,8 +1,14 @@
-<<<<<<< HEAD
-mod by kang.cunhua
-=======
 
->>>>>>> bb5d47594ce2898e06df6462b580f7d903e9d364
+mod by kang.cunhua
+
+lalalal
+kongsys
+
 merged first line
+sunhao first line
+
+Qian Yukun's modify
 longpengcheng
 roddy
+qidunhu
+wenwen
