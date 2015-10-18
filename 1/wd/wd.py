@@ -1,23 +1,4 @@
-<<<<<<< HEAD
 merged first line
-<<<<<<< HEAD
-sky
-=======
-<<<<<<< HEAD
-kongsys
-merged first line
-<<<<<<< HEAD
-<<<<<<< HEAD
-qidunhu
-=======
-longpengcheng
-roddy
->>>>>>> bb5d47594ce2898e06df6462b580f7d903e9d364
->>>>>>> 08104630128ce49c1577dbaabab5b229fd3f3102
-=======
-sunhao first line
->>>>>>> aba2c0a4b4092fd9878a81f39a98f841c096173f
-=======
 =======
 long
 lalalal
