@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 merged first line
 <<<<<<< HEAD
-add lines by luyidong
+sky
 =======
 <<<<<<< HEAD
 kongsys
@@ -34,3 +33,6 @@ wenwen
 jiaoxingrong add lines;^_^
 >>>>>>> f363cb4f041224319c1223ad76adeb6a60056eff
 >>>>>>> 08104630128ce49c1577dbaabab5b229fd3f3102
+=======
+jiaoxingrong add lines;^_^
+>>>>>>> 4e0781768fd02eaf231fb06b2cd3497cbced8079
