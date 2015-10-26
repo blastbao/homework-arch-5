@@ -17,15 +17,12 @@ urlpattern=re.compile(htmlallreg)
 urllist=urlpattern.findall(html)
 imgreg=r'src=(.+?jpg)'
 imgpattern=re.compile(imgreg)
-#imgdir='/workdir/staff/qidunhu/qi/reboot/imgdir'
 tmpreg=r'(h.+?jpg)'  
 tmppattern=re.compile(tmpreg)
 
-#print urllist
 for i in urllist:
     imgpage=urllib2.urlopen(i)
     imghtml=imgpage.read()
-#    urllib.urlretrieve(imgpattern.findall(imghtml),imgdir)
 tmpimglist=imgpattern.findall(imghtml)
 y=0
 for x in tmpimglist:
@@ -34,4 +31,3 @@ for x in tmpimglist:
 	tmpurl=tmppattern.findall(tmphtml)
 	urllib.urlretrieve(tmpurl,'%s'.jpg %y)
 	y+=1
-
