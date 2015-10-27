@@ -15,7 +15,7 @@ html=page.read()
 htmlallreg=r'http://www.douban.com/group/topic/[\d]*'
 urlpattern=re.compile(htmlallreg)
 urllist=urlpattern.findall(html)
-imgreg=r'(http://img3.douban.com/view/group_topic/large/public.+?jpg)'
+imgreg=r'(http://img[0-9].douban.com/view/group_topic/large/public.+?jpg)'
 imgpattern=re.compile(imgreg)
 header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
 'Accept':'text/html;q=0.9,*/*;q=0.8',
