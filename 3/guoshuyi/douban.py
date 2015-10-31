@@ -30,7 +30,7 @@ for murl in matches:
         response = urllib2.urlopen(req,timeout=10)
         the_page2 = response.read()
         print the_page2
-        p = re.compile(ur'\<img src="(.*?)"\salt\sclass')
+        p = re.compile(ur'<div class="topic-figure cc">\s*<img src="(.*?)" alt="" class="">\s*</div>')
         pmatches = re.findall(p,the_page2)
         print pmatches
         img_list.extend(pmatches)
