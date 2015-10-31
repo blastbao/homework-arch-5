@@ -3,8 +3,7 @@ import urllib2
 import re
 url="http://www.douban.com/group/haixiuzu/"
 def geturl(strurl):
-   headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36',
-        'cookie':'bid="eFv50RNBoTA"; ll="108288"; __utmt=1; _pk_id.100001.8cb4=1661373936c24daa.1446305376.1.1446305651.1446305376.; _pk_ses.100001.8cb4=*; __utma=30149280.1074281686.1446305377.1446305377.1446305377.1; __utmb=30149280.8.10.1446305377; __utmc=30149280; __utmz=30149280.1446305377.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)'}
+   headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.93 Safari/537.36'}
    req=urllib2.Request(strurl,headers=headers)
    response=urllib2.urlopen(strurl)
    the_page=response.read()
