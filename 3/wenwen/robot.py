@@ -6,13 +6,14 @@ import urllib2
 import re
 import sys
 import os
-
+import time
 reload(sys)
 sys.setdefaultencoding('utf-8')
 print sys.getdefaultencoding()
 url = "http://www.douban.com/group/haixiuzu/discussion?start="
 
 def get_pic(sublink,filename):
+    time.sleep(5)
     fn=filename
     sl=sublink
     print "sl= "+sl
