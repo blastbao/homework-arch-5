@@ -22,11 +22,11 @@ def get_pic(sublink,filename):
         print "error"
     subhtml=subresponse.read()
 #    print subhtml
-    pic_links=re.findall("http://img[3-4].douban.com/view/group_topic/large/public/.*\.jpg",subhtml)
+    pic_links=re.findall("http://img[0-9].douban.com/view/group_topic/large/public/.*\.jpg",subhtml)
     count_pics=len(pic_links)
     if count_pics > 0:
-        file_path="/Users/wenwen/pics/"+str(fn)
-        if not os.path.isdir("/Users/wenwen/pics/"+str(fn)):
+        file_path="/root/pics/"+str(fn)
+        if not os.path.isdir("/root/pics/"+str(fn)):
             os.mkdir(file_path)
 
 
