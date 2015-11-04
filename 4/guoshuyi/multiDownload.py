@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
 import urllib2
-from multiprocessing import Pool
 import sys
-url = 'http://dldir1.qq.com/qqfile/qq/QQ7.7/16096/QQ7.7.exe'
+from multiprocessing import Pool
+from progressbar import *
+url = 'http://dldir1.qq.com/qqfile/qq/QQ7.8/16379/QQ7.8.exe'
 
 
 if len(sys.argv) > 2:
@@ -55,6 +56,9 @@ def downloader(Range):
 
 
 def main(url, process=1):
+    widgets = ['Progress: ', Percentage(), ' ', Bar(marker=RotatingMarker('>-=')),
+      ' ', ETA(), ' ', FileTransferSpeed()]
+    pbar = ProgressBar(widgets=widgets, maxval=10000000).start()
     process = process
     datarange = getRange(url)
     rangeList = sliceRange(datarange,process)
@@ -62,6 +66,7 @@ def main(url, process=1):
     pool.map(downloader,rangeList)
     pool.close()
     pool.join()
+    pbar.finish()
 #    for i in rangeList:
 #       downloader(i) 
 
