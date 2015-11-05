@@ -29,7 +29,7 @@ def sliceRange(datarange, process=1):
     for i in range(process):
         start, end = end + 1, end + avgRange
         if start == 1:
-        	start = 0
+            start = 0
         if i == process-1:
             end = ''
         range_i = (start, end)
