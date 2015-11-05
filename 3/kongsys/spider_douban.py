@@ -15,14 +15,14 @@ def grepLink(patRE, html):
     
 GroupURL = 'http://www.douban.com/group/haixiuzu/'
 Grouphtml = openURL(GroupURL)
-PostPat = r'(\shref="http://www.douban.com/group/topic/\d+/")'
-PostURLList = [ x.replace(r' href="', '').replace(r'"', '') for x in grepLink(PostPat, Grouphtml) ]
+PostPat = r'(http://www.douban.com/group/topic/\d+/)'
+PostURLList = grepLink(PostPat, Grouphtml)
 
-imgPat = r'<img\ssrc=".*"\salt'
+imgPat = r'(http://img\d.douban.com/view/group_topic/large/public/\w*.\w{3})'
 for PostUrl in PostURLList:
     Posthtml = openURL(PostUrl)
-    imageURLList = [ x.split()[1].replace("src=\"", '').replace('\"', '') for x in grepLink(imgPat, Posthtml) ]
+    imageURLList = grepLink(imgPat, Posthtml) ]
     
     for imageUrl in imageURLList:
-        imageFile = open('/home/john/Pictures/'+imageURLList[0].split('/')[-1], 'wb')
+        imageFile = open('/home/john/Pictures/'+imageUrl[0].split('/')[-1], 'wb')
         imageFile.write(openURL(imageUrl))
