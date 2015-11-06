@@ -21,7 +21,7 @@ print LenList
 LaterDownList = list()
 if ('Content-Disposition' in Respone.headers) and ('filename' in Respone.headers['Content-Disposition']):
     condisStr = Respone.headers['Content-Disposition']
-    File = '/tmp/%s' % re.findall(r'\bfilename=.*', aa)[0].split("=")[1].replace('"', '') 
+    File = '/tmp/%s' % re.findall(r'\bfilename=.*', condisStr)[0].split("=")[1].replace('"', '') 
 else:
     if len(sys.argv) == 3 :
         File = '/tmp/%s' % sys.argv[2]
