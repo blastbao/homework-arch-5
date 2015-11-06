@@ -16,6 +16,7 @@ class downloader():
         req.get_method = lambda : "HEAD"
         resp = urllib2.urlopen(req).headers
         self.total = int(resp['Content-Length'])
+	print self.total
 
     def cal_range(self):
         initbyte = 0
@@ -45,7 +46,7 @@ class downloader():
         except:
             print("error when open url: %s", self.url)
             sys.exit(2)
-        if self.writeFile(resp.read(),startRange):
+        if self.writeFile(resp.read(),startRange) == "ok":
             secondTime = time.time()
             seconds = secondTime - firstTime
             print "start_pos: %d to end_pos: %d is done in %ss speed is %s Kb/s" %\
@@ -59,19 +60,20 @@ class downloader():
             fw.write(html)
         except Exception as e:
             print e.message
+	    return "error"
         finally:
             fw.close()
-	    return 1
+	    return "ok"
 
 
     def run(self):
         self.offset = self.total/int(self.blocks)
-        self.fd = open(self.filename,'w')
+       # self.fd = open(self.filename,'w')
         offsetList=self.cal_range()
-        pool = ThreadPools(self.blocks)
-        pool.map(self.getRanges,offsetList)
-        pool.close()
-        pool.join()
+       # pool = ThreadPools(self.blocks)
+       # pool.map(self.getRanges,offsetList)
+       # pool.close()
+       # pool.join()
 
 if __name__ == '__main__':
     down = downloader('http://archive.kernel.org/centos-vault/5.9/isos/x86_64/CentOS-5.9-x86_64-bin-DVD-1of2.iso',4)
