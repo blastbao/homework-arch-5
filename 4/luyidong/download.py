@@ -1,5 +1,6 @@
 #coding=utf-8
 #!/usr/bin/python2.7
+#__author__ = 'louis'
 
 import threading
 import urllib2
@@ -36,7 +37,6 @@ class Downloader(threading.Thread):
                     print '%s done.' % self.getName()
                 break
             # 使用 with lock
-            # 需要python >= 2.5
             with lock:
                 sys.stdout.write('%s saveing block...' % self.getName())
                 # 设置文件对象偏移地址
@@ -65,7 +65,7 @@ def main(url, thread=3, save_file='', buffer=1024):
             end_size = end_size + pad_size + 1
         t = Downloader(url, start_size, end_size, fobj, buffer)
         plist.append(t)
-    #  开始搬砖
+    #  开始
     for t in plist:
         t.start()
     # 等待所有线程结束
