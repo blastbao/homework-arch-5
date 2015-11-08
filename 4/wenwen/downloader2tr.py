@@ -65,15 +65,28 @@ class downloader():
             fw.close()
 	    return "ok"
 
+#    def isCheck(self,initList):
+#        try:
+#            checkF = open(self.filename,'r')
+#        except:
+#            print "file not exsit"
+#            return []
+#        else:
+#            for startend in initList:
+#                if len(checkF.read(self.offset)) < self.offset:
+#                    print ""
 
+ #           return
     def run(self):
         self.offset = self.total/int(self.blocks)
-       # self.fd = open(self.filename,'w')
         offsetList=self.cal_range()
-       # pool = ThreadPools(self.blocks)
-       # pool.map(self.getRanges,offsetList)
-       # pool.close()
-       # pool.join()
+#        if len(self.isCheck(offsetList)) == 0:
+        self.fd = open(self.filename,'w')
+        pool = ThreadPools(self.blocks)
+        pool.map(self.getRanges,offsetList)
+        pool.close()
+        pool.join()
+
 
 if __name__ == '__main__':
     down = downloader('http://archive.kernel.org/centos-vault/5.9/isos/x86_64/CentOS-5.9-x86_64-bin-DVD-1of2.iso',4)
