@@ -2,7 +2,7 @@
 # coding=utf‐8
 
 # >python test.py http://dldir1.qq.com/qqfile/qq/QQ7.7Light/14298/QQ7.7Light.exe 4
-# >python test.py http://dldir1.qq.com/qqfile/qq/QQ7.8/16379/QQ7.8.exe 3   #55,427,256  #56,608,798
+# >python test.py http://dldir1.qq.com/qqfile/qq/QQ7.8/16379/QQ7.8.exe 3   
 import sys
 import os
 import urllib2
