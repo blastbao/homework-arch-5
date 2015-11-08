@@ -2,78 +2,57 @@
 #!/usr/bin/python2.7
 #__author__ = 'louis'
 
-import threading
-import urllib2
 import sys
-max_thread = 10
-# 初始化锁
-lock = threading.RLock()
+import os
+import urllib2
+from threading import Thread
 
-class Downloader(threading.Thread):
-    def __init__(self, url, start_size, end_size, fobj, buffer):
-        self.url = url
-        self.buffer = buffer
-        self.start_size = start_size
-        self.end_size = end_size
-        self.fobj = fobj
-        threading.Thread.__init__(self)
-    def run(self):
-        with lock:
-            print 'starting: %s' % self.getName()
-        self._download()
-    def _download(self):
+'''
+1. 获取文件大小
+2. 任务拆分 请求文件的range/threadNum
+3.多线程下载，文件聚合
+'''
 
-        req = urllib2.Request(self.url)
-        # 添加HTTP Header(RANGE)设置下载数据的范围
-        req.headers['Range'] = 'bytes=%s-%s' % (self.start_size, self.end_size)
-        f = urllib2.urlopen(req)
-        # 初始化当前线程文件对象偏移量
-        offset = self.start_size
-        while 1:
-            block = f.read(self.buffer)
-            # 当前线程数据获取完毕后则退出
-            if not block:
-                with lock:
-                    print '%s done.' % self.getName()
-                break
-            # 使用 with lock
-            with lock:
-                sys.stdout.write('%s saveing block...' % self.getName())
-                # 设置文件对象偏移地址
-                self.fobj.seek(offset)
-                # 写入获取到的数据
-                self.fobj.write(block)
-                offset = offset + len(block)
-                sys.stdout.write('done.\n')
+url=sys.argv[1]
+thread_num=int(sys.argv[2])
+filename=url.split('/')[-1]
 
-def main(url, thread=3, save_file='', buffer=1024):
-    # 最大线程数量不能超过max_thread
-    thread = thread if thread <= max_thread else max_thread
-    # 获取文件的大小
-    req = urllib2.urlopen(url)
-    size = int(req.info().getheaders('Content-Length')[0])
-    # 初始化文件对象
-    fobj = open(save_file, 'wb')
-    # 根据线程数量计算 每个线程负责的http Range 大小
-    avg_size, pad_size = divmod(size, thread)
-    plist = []
-    for i in xrange(thread):
-        start_size = i*avg_size
-        end_size = start_size + avg_size - 1
-        if i == thread - 1:
-            # 最后一个线程加上pad_size
-            end_size = end_size + pad_size + 1
-        t = Downloader(url, start_size, end_size, fobj, buffer)
-        plist.append(t)
-    #  开始
-    for t in plist:
+def download(size,files):
+
+    header = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/    537.36' }
+    req = urllib2.Request(url,headers=header)
+    # 添加HTTP Header(RANGE)设置下载数据的范围
+    req.headers['Range'] = 'bytes=%s' % size
+    #req = urllib2.Request(url,headers=head)
+    data = urllib2.urlopen(req).read()
+
+    #with open('QQ.exe','w+') as f:
+    f = files
+    f.seek(int(size.split('-')[0]))
+    f.write(data)
+    f.flush()
+
+file_size=int(urllib2.urlopen(url).info()['Content-Length'])
+part_size=file_size / thread_num
+last_size=(thread_num - 1)*part_size
+Rangelist=[(str(x),str(x + part_size - 1)) for x in xrange(0,file_size,part_size) if x < last_size]
+
+
+def main():
+    threads = []
+    file_fd = []
+    for part in Rangelist:
+        part = '%s-%s' % part
+        file_fd.append(open(filename,'w+'))
+        threads.append(Thread(target=download,args=(part,file_fd.pop())))
+    else:
+        file_fd.append(open(filename,'w+'))
+        threads.append(Thread(target=download,args=(str(last_size)+'-',file_fd.pop())))
+
+    for t in threads:
         t.start()
-    # 等待所有线程结束
-    for t in plist:
+    for t in threads:
         t.join()
-    # 结束当然记得关闭文件对象
-    fobj.close()
-    print 'Download completed!'
+
 if __name__ == '__main__':
-    url = 'http://dldir1.qq.com/qqfile/qq/QQ7.8/16379/QQ7.8.exe'
-    main(url=url, thread=10, save_file='QQ7.8.exe', buffer=4096)
+    main()
