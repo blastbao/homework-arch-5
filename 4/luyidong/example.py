@@ -6,12 +6,6 @@ import os
 import urllib2
 import threading
 
-'''
-1. è·åæä»¶å¤§å°
-2. ä»»å¡æå è¯·æ±æä»¶çrange/threadNum
-3.å¤çº¿ç¨ä¸è½½ï¼æä»¶èå
-'''
-
 def print_usg():
     print('usage:\n\t' + sys.argv[0] + ' http://URL THREAD_NUM')
     sys.exit(1)
