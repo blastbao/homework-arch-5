@@ -75,7 +75,7 @@ def type_filter(type):
 
 
 if __name__ == "__main__":
-    server_work_thread = 6  # max worker thread,
+    server_work_thread = 11  # max worker thread,
     pool = ThreadPool(server_work_thread)
     init_type = [0]
     init_type.extend(xrange(1, server_work_thread))
