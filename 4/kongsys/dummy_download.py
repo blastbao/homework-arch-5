@@ -32,8 +32,9 @@ Req.get_method = lambda : 'HEAD'
 Respone = urllib2.urlopen(Req)
 
 Length = int(Respone.headers['Content-Length']) - 1
-#split by 512K
-LforL = splitLen(Length, 5242288)
+print Length/1024/1024
+#split by 1M
+LforL = splitLen(Length, 1048576)
 
 #get file name
 if ('Content-Disposition' in Respone.headers) and ('filename' in Respone.headers['Content-Disposition']):
@@ -47,11 +48,12 @@ else:
 
 def writeRespone(request, fileposition):
     Response = urllib2.urlopen(request, timeout=100)
-    print fileposition
+    content = Respone.read()
+    print "content length %d" % len(content)
     fd2 = os.dup(f.fileno())
     file = os.fdopen(fd2, 'w')
     file.seek(fileposition)
-    file.write(Response.read())
+    file.write(content)
     file.close()
 
 def openURL(*args):
