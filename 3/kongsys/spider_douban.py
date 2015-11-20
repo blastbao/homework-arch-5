@@ -21,8 +21,8 @@ PostURLList = grepLink(PostPat, Grouphtml)
 imgPat = r'(http://img\d.douban.com/view/group_topic/large/public/\w*.\w{3})'
 for PostUrl in PostURLList:
     Posthtml = openURL(PostUrl)
-    imageURLList = grepLink(imgPat, Posthtml) ]
-    
+    imageURLList = grepLink(imgPat, Posthtml)
+
     for imageUrl in imageURLList:
-        imageFile = open('/home/john/Pictures/'+imageUrl[0].split('/')[-1], 'wb')
+        imageFile = open('/home/john/Pictures/'+imageUrl.split('/')[-1], 'wb')
         imageFile.write(openURL(imageUrl))
