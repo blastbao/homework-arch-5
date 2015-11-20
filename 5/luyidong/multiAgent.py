@@ -26,28 +26,29 @@ class producerThread (threading.Thread):
         self.put_data()
 
 
-    def put_data(self):
-        m = mon()
-        #atime=int(time.time())
-        while 1:
-            print "Starting " + self.getName()
-            #print data 
-            self.queueLock.acquire()
-            data = m.runAllGet()
-            self.q.put(data)
-            self.queueLock.release()
-            time.sleep(self.interval)
+#    def put_data(self):
+#        m = mon()
+#        #atime=int(time.time())
+#        while 1:
+#            print "Starting " + self.getName()
+#            #print data 
+#            self.queueLock.acquire()
+#            data = m.runAllGet()
+#            self.q.put(data)
+#            self.queueLock.release()
+#            time.sleep(self.interval)
             #btime=int(time.time())
             #print '%s  %s' % (str(data), self.interval-((btime-atime)%30))
             #time.sleep(self.interval-((btime-atime)%self.interval))
-'''
-    def put_data(self):
+            
+    def  put_data(self):
          atime=int(time.time())
          m = mon()
          while 1:
             print "Starting " + self.getName()
-            self.queueLock.acquire()
-            if not self.q.empty():
+            #self.queueLock.acquire()
+            #if not self.q.empty():
+            if self.queueLock.acquire():
                 data = m.runAllGet()
                 print data
                 self.q.put(data)
@@ -58,7 +59,7 @@ class producerThread (threading.Thread):
 
             #btime=int(time.time())
             #time.sleep(self.interval-((btime-atime)%self.interval))
-'''
+
 
 
 class consumerThread (threading.Thread):
