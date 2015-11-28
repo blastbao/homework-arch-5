@@ -3,7 +3,7 @@
 #战5渣...只添加了注释，在10字节头基础上处理读telent的\r\n情况，但telnet的exit没弄好
 #目前对read函数中的部分need_read还是不太理解
 
-from daemon import Daemon
+#from daemon import Daemon
 import socket
 import select
 import time
