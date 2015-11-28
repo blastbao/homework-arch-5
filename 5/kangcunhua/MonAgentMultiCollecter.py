@@ -3,7 +3,7 @@
 # @Author: Kang.Cunhua
 # @Date:   2015-11-13 12:01:18
 # @Last Modified by:   Kang.Cunhua
-# @Last Modified time: 2015-11-13 17:03:36
+# @Last Modified time: 2015-11-22 13:39:06
 '''
     第五次课作业：
     将MonAgent.py的client改成支持多个work thread，实现多线程同时work，互相分担任务。
@@ -97,6 +97,12 @@ class CollectThead(threading.Thread):
         self.interval = interval
         # sendData_mh 采取的是长连接，这个list用来保存可用的连接
         self.sock_1 = [None]
+        # 发令队列，每$interval秒放进一个令牌，队列长度1
+        self.starter = Queue.Queue(1)
+
+    def setStarter(self):
+        time.sleep(self.interval)
+        self.starter.put(1)
 
     def run(self):
         # 开启collect线程，collect进程负责采集本机的监控数据
@@ -107,11 +113,11 @@ class CollectThead(threading.Thread):
         atime = int(time.time())
         while 1:
             print '采集线程 ' + self.name + ' try to get lock!'
-            if self.ql.acquire():
-
-                # 获得锁之后再运行
-                # data = m.runAllGet(agentTest=True)  # 打开调试
-                data = m.runAllGet()  # 关闭调试
+            if not self.starter.empty():
+                取得令牌
+                self.starter.get()
+                data = m.runAllGet(agentTest=True)  # 打开调试
+                # data = m.runAllGet()  # 关闭调试
                 self.q.put(data)
                 # 计算一下时间，保证采集是 self.interval秒一次的
                 print '采集线程 ' + self.name + str(data)
@@ -125,7 +131,7 @@ class CollectThead(threading.Thread):
                 self.ql.release()
 
             else:
-                print '采集线程 ' + self.name + ' get lock failed!'
+                print '采集线程 ' + self.name + ' 等待令牌!'
             if self.q.full():
                 print '采集线程 ' + self.name + ' wait for Queue!'
 
