@@ -45,12 +45,12 @@ def startTh():
 	ql1 = threading.Lock()
 	list_time[0]=int(time.time())
 	list_time[1]=int(time.time())
+	sendjson = porterThread('sendjson', q1, ql1, interval=3)
+	sendjson.start()
 	while True :
 		collect1 = porterThread("collect1", q1, ql1, interval=3)
 		collect2 = porterThread("collect2", q1, ql1, interval=3)
 		print "now " + str(time.time())
-		sendjson = porterThread('sendjson', q1, ql1, interval=3)
-		sendjson.start()
 		#print max(list_c)
 		if int(time.time()) - int(list_time[0]) >= 3 and list_c[0] == 1 and list_c[1] != 1 :
 			collect2.start()
