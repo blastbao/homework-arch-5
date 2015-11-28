@@ -167,7 +167,7 @@ class nbNet(nbNetBase):
         #并打印当前scoket状态
         self.setFd(self.listen_sock)
         self.epoll_sock = select.epoll()
-        #注册 listen_sock 至epollin interface 边缘触发模式
+        #注册 listen_sock 至epollin interface
         self.epoll_sock.register(self.listen_sock.fileno(), select.EPOLLIN)
         self.logic = logic
         #初始化状态机字典
