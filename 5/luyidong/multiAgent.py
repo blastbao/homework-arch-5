@@ -52,9 +52,10 @@ class producerThread (threading.Thread):
                 data = m.runAllGet()
                 print data
                 self.q.put(data)
-                self.queueLock.release()
+               # self.queueLock.release()
             else:
-                self.queueLock.release()
+                pass
+                #self.queueLock.release()
             time.sleep(self.interval)
 
             #btime=int(time.time())
