@@ -15,7 +15,6 @@ lock = threading.Lock()
 max_num_per_wokrer = 3  # max num for worker thread
 syn_list = [0] * max_num_per_wokrer
 
-
 class Thread_data_handel_worker(threading.Thread):
     def __init__(self, name, queue, interval=3):
         threading.Thread.__init__(self)
