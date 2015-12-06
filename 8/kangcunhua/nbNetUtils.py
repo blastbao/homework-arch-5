@@ -3,7 +3,7 @@
 # @Author: Kang.Cunhua
 # @Date:   2015-11-22 16:24:54
 # @Last Modified by:   Kang.Cunhua
-# @Last Modified time: 2015-11-28 23:42:20
+# @Last Modified time: 2015-12-01 14:24:27
 
 from daemon import Daemon
 import socket
@@ -74,8 +74,7 @@ def sendData_mh(sock_l, host_l, data, single_host_retry=3):
         while retry < single_host_retry:
             try:
                 if sock_l[0] == None:
-                    sock_l[0] = socket.socket(
-                        socket.AF_INET, socket.SOCK_STREAM)
+                    sock_l[0] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     print "connecting", host, port
                     #connect_timeout(sock_l[0], (host, port))
                     sock_l[0].settimeout(5)
