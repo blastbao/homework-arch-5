@@ -3,7 +3,7 @@
 # @Author: Kang.Cunhua
 # @Date:   2015-11-30 18:53:31
 # @Last Modified by:   Kang.Cunhua
-# @Last Modified time: 2015-12-01 01:06:00
+# @Last Modified time: 2015-12-06 10:57:18
 import sys
 import os
 import MySQLdb as mysql
@@ -30,11 +30,12 @@ class Funfilter(object):
         super(Funfilter, self).__init__()
 
         self.alarmStatus = {}
-        self.alarmTotal = 0
+        # self.alarmTotal = 0
         for rule in conf.ff_conf:
             monKey, operator, value, alarmRecv, alarmNum, maxAlarmNumPerinterval, interval = rule
             monName = monKey + operator + str(value)
-            self.alarmStatus[monName] = [False, 0, 0, 0]
+            # 描述：{'监控条件':[触发报警次数,触发阀值几次,第一次报警时间,距离第一次报警时间（单位：秒）]}
+            self.alarmStatus[monName] = [0, 0, 0, 0]
         print '========init:', self.alarmStatus
 
     def ff(self, d_in):
@@ -49,8 +50,8 @@ class Funfilter(object):
         异常4：00115{"MemTotal": 15888, "MemUsage": 1904, "MemFree": 14083, "Host": "teach.works", "LoadAvg": 0.15, "Time": 1434246835}
         异常5：00115{"MemTotal": 15888, "MemUsage": 1904, "MemFree": 14083, "Host": "teach.works", "LoadAvg": 0.15, "Time": 1434246875}
         正常2：00115{"MemTotal": 15888, "MemUsage": 1804, "MemFree": 14083, "Host": "teach.works", "LoadAvg": 0.15, "Time": 1434246885}
-        描述：{'监控条件',[是否报警,累计几次了,第一次报警时间,距离上次报警时间（单位：秒）]}
-        alarmStatus={'wd':[false,3,1434246795,60],'pc':[false,5,1434246795,300],'woniu':[false,2,1434246795,10]}
+        描述：{'监控条件':[触发报警次数,触发阀值几次,第一次报警时间,距离第一次报警时间（单位：秒）]}
+        alarmStatus={'wd':[0,3,1434246795,60],'pc':[0,5,1434246795,300],'woniu':[0,2,1434246795,10]}
         """
 
         # print conf.ff_conf
@@ -74,19 +75,19 @@ class Funfilter(object):
                         'Time'] - self.alarmStatus[monName][2]  # 第二次起，计算距离上一次触发过了多少秒
                 self.alarmStatus[monName][1] += 1  # 触发次数+1
 
-                # 触发次数大于 配置的单位阀值 而且 触发间隔小于 配置的单位时间 而且 单位时间内报警次数小于 配置，报警
-                if self.alarmStatus[monName][1] >= alarmNum and self.alarmStatus[monName][3] < interval and self.alarmStatus[monName][1] <= maxAlarmNum:
-                    self.alarmStatus[monName][0] = True
+                # 触发次数大于 配置的单位阀值 而且 触发间隔小于 配置的单位时间 而且 单位时间内触发报警次数小于 配置，报警
+                if self.alarmStatus[monName][1] >= alarmNum and self.alarmStatus[monName][3] < interval and self.alarmStatus[monName][0] <= maxAlarmNum:
+                    self.alarmStatus[monName][0] += 1  # 记录触发报警次数
                     print "!!!Alarm", eval_function, alarmRecv
                 else:
                     print '========未达到报警条件:', self.alarmStatus
                     print '========? interval and self.alarmStatus[monName][1] <= maxAlarmNum:', self.alarmStatus[monName][1], 'VS', maxAlarmNum
-                # 如果超出单位间隔时间，重置报警次数为1，初始化当前 数据时间为第一次报警时间，初始化距离上次报警时间为0
+                # 如果超出单位间隔时间，重置触发报警次数为1，累计触发阀值为1，初始化当前 数据时间为第一次报警时间，初始化距离上次报警时间为0
                 if self.alarmStatus[monName][3] > interval:
-                    self.alarmStatus[monName] = [False, 1, mon_data['Time'], 0]
-                    print '========超出单位间隔时间：重置报警状态', self.alarmStatus[monName][1], 'VS', maxAlarmNum
-            elif (self.alarmStatus.get(monName, [False, 0, 0, 0]) and self.alarmStatus[monName][1] >= 1):
-                self.alarmStatus[monName] = [False, 0, 0, 0]
+                    self.alarmStatus[monName] = [1, 1, mon_data['Time'], 0]
+                    print '========超出单位间隔时间：重置报警状态', self.alarmStatus[monName][0], 'VS', maxAlarmNum
+            elif (self.alarmStatus.get(monName, [0, 0, 0, 0]) and self.alarmStatus[monName][0] >= 1):
+                self.alarmStatus[monName] = [0, 0, 0, 0]
                 print "!!!Recover", eval_function, alarmRecv
             print '========after alarm:', self.alarmStatus
 
