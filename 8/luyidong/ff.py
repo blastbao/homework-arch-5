@@ -37,7 +37,9 @@ def ff(d_in):
             #print monTig
             alarmStatus[monTig] = True
             #print alarmStatus[monTig]
-            if monTig:
+            monResult = eval(monTig)
+            print monResult
+            if monResult:
                 print "Alarm", eval_function, alarmRecv
                 
         else:
