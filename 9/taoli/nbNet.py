@@ -19,10 +19,9 @@ max_header_length = 10  # 协议头长度
 # 10111 for readmore'
 class STATE:
     def __init__(self):
-        self.list = [0]*8
         self.state = 111  # 默认创建状态
         self.have_read = 0  # 已经读取的字符长度
-        self.need_read = max_header_length  # 第一次读取时候长度等于协议头的长度
+        self.need_read = 10  # 第一次读取时候长度等于协议头的长度
         self.have_write = 0  # 已经写到缓冲区的字符长度
         self.need_write = 0  # 写入字符串总长度
         self.buff_read = ''  # 存放recv函数执行以后结果，包含目前一直所有的读取结果字符
@@ -67,8 +66,7 @@ class nbNetBase:
             sock_state.have_read += len(one_read)  # 已经读取的数据总长度
             sock_state.need_read -= len(one_read)  # 需要读取的总长度减去本地读取长度，就是下一次需要读取的长度
 
-            if sock_state.have_read == max_header_length:  # 如果这次读取已经独到了协议头
-
+            if sock_state.have_read == 10:  # 如果这次读取已经独到了协议头
                 header_said_need_read = int(sock_state.buff_read)  # 读取协议头里的数据实际长度
                 if header_said_need_read <= 0:
                     raise socket.error
@@ -84,16 +82,15 @@ class nbNetBase:
         except(socket.error, ValueError), msg:
             try:
                 if msg.errno == 11:
-                    return 'retry'
+                    return 101010
             except:
                 pass
             return 110
 
     def write(self, fd):
         sock_state = self.conn_state[fd]
-        conn = sock_state.sock_obj
         try:
-            have_send = conn.send(sock_state.buff_write[sock_state.have_write:])  # 从上次位置开始继续发送，同事返回发送成功的数据长度
+            have_send = sock_state.sock_obj.send(sock_state.buff_write[sock_state.have_write:])  # 从上次位置开始继续发送，同事返回发送成功的数据长度
             sock_state.have_write += have_send
             sock_state.need_write -= have_send
             if sock_state.need_write == 0 and sock_state.have_write != 0:  # 全部发送完毕，可以修改状态了
@@ -105,18 +102,14 @@ class nbNetBase:
 
     def run(self):
         while 1:
-            epoll_list = self.epoll_sock.poll()
-            for fd, events in epoll_list:
-                sock_state = self.conn_state[fd]
+            for fd, events in self.epoll_sock.poll():
                 if select.EPOLLHUP & events:
+                    sock_state = self.conn_state[fd]
                     sock_state.state = 110
                 elif select.EPOLLERR & events:
+                    sock_state = self.conn_state[fd]
                     sock_state.state = 110
-                self.state_machine(fd)  # 状态机启动
-
-    def state_machine(self, fd):
-        sock_state = self.conn_state[fd]
-        self.sm[sock_state.state](fd)
+                self.sm[self.conn_state[fd].state](fd)  # 状态机启动
 
 
 class nbNet(nbNetBase):
@@ -139,11 +132,6 @@ class nbNet(nbNetBase):
         }
 
     def accept2read(self, fd):
-        '''
-        完成从accpet到read的处理过程，
-        :param fd:
-        :return:
-        '''
         conn = self.accept(fd)
         self.epoll_sock.register(conn.fileno(), select.EPOLLIN)  # 让此FD注册EPOLL监听事件
         self.setFd(conn)
@@ -151,11 +139,6 @@ class nbNet(nbNetBase):
         # dbgPrint('\n accept-end!')
 
     def read2process(self, fd):
-        '''
-         负责处理读取数据到处理业务逻辑的状态转换
-        :param fd:
-        :return:
-        '''
         try:
             read_ret = self.read(fd)
         except Exception, msg:
@@ -166,11 +149,11 @@ class nbNet(nbNetBase):
             pass
         elif read_ret == 10111:  # 没读完，继续
             pass
-        elif read_ret == 'retry':  # 11错误，重拾，继续读把
+        elif read_ret == 101010:  # 11错误，重拾，继续读把
             pass
         elif read_ret == 110:  # read函数里估计哪里出错了，直接关闭
             self.conn_state[fd].state = 110
-            self.state_machine(fd)
+            self.sm[self.conn_state[fd].state](fd)
         else:
             raise Exception()
 
@@ -189,7 +172,7 @@ class nbNet(nbNetBase):
             self.epoll_sock.modify(fd, select.EPOLLIN)  # fd绑定EPOLLIN事件，会响应客户端发送数据的事件
         elif write_ret == 110:  # 出错直接关闭
             self.conn_state[fd].state = 110
-            self.state_machine(fd)
+            self.sm[self.conn_state[fd].state](fd)
 
     def process(self, fd):
         sock_state = self.conn_state[fd]
