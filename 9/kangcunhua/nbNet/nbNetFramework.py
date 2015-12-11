@@ -3,7 +3,7 @@
 # @Author: Kang.Cunhua
 # @Date:   2015-12-06 14:19:45
 # @Last Modified by:   Kang.Cunhua
-# @Last Modified time: 2015-12-11 19:33:58
+# @Last Modified time: 2015-12-11 23:26:52
 
 from daemon import Daemon
 import socket
@@ -81,20 +81,20 @@ class nbNetBase:
                 # after protocol header haven readed, read the real cmd content,
                 # call machine instead of call read() it self in common.
                 # sock_state.printState()
-                return self.smtup[7]
+                return 7
             elif sock_state.need_read == 0:
                 # recv complete, change state to process it
-                return self.smtup[3]
+                return 3
             else:
-                return self.smtup[8]
+                return 8
         except (socket.error, ValueError), msg:
             try:
                 if msg.errno == 11:
                     # dbgPrint("11 " + msg)
-                    return self.smtup[9]
+                    return 9
             except:
                 pass
-            return self.smtup[4]
+            return 4
 
     #@profile
     def write(self, fd):
@@ -110,11 +110,11 @@ class nbNetBase:
                 # send complete, re init status, and listen re-read
                 # sock_state.printState()
                 # dbgPrint('\n write data completed!')
-                return self.smtup[5]
+                return 5
             else:
-                return self.smtup[6]
+                return 6
         except socket.error, msg:
-            return self.smtup[4]
+            return 4
 
     def run(self):
         while True:
@@ -130,10 +130,10 @@ class nbNetBase:
                 sock_state = self.conn_state[fd]
                 if select.EPOLLHUP & events:
                     # dbgPrint("EPOLLHUP")
-                    sock_state.state = self.smtup[4]
+                    sock_state.state = 4
                 elif select.EPOLLERR & events:
                     # dbgPrint("EPOLLERR")
-                    sock_state.state = self.smtup[4]
+                    sock_state.state = 4
                 self.state_machine(fd)
 
     def state_machine(self, fd):
@@ -157,15 +157,15 @@ class nbNet(nbNetBase):
         # LT for default, ET add ' | select.EPOLLET '
         self.epoll_sock.register(self.listen_sock.fileno(), select.EPOLLIN)
         self.logic = logic
-        # 定义一个元组 # (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
-        # 对应状态：('accept','read','write','process','closing','writecomplete','writemore','readcontent','readmore','retry')
-        self.smtup = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        # # 定义一个元组 # (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+        # # 对应状态：('accept','read','write','process','closing','writecomplete','writemore','readcontent','readmore','retry')
+        # self.smtup = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
         self.sm = {
-            self.smtup[0]: self.accept2read,
-            self.smtup[1]: self.read2process,
-            self.smtup[2]: self.write2read,
-            self.smtup[3]: self.process,
-            self.smtup[4]: self.close,
+            0: self.accept2read,
+            1: self.read2process,
+            2: self.write2read,
+            3: self.process,
+            4: self.close,
         }
         # dbgPrint('\n__init__: end, register no: %s' % self.listen_sock.fileno() )
 
@@ -175,7 +175,7 @@ class nbNet(nbNetBase):
         response = self.logic(sock_state.buff_read)
         sock_state.buff_write = "%010d%s" % (len(response), response)
         sock_state.need_write = len(sock_state.buff_write)
-        sock_state.state = self.smtup[2]
+        sock_state.state = 2
         self.epoll_sock.modify(fd, select.EPOLLOUT)
         # sock_state.printState()
         # self.state_machine(fd)
@@ -186,7 +186,7 @@ class nbNet(nbNetBase):
         self.epoll_sock.register(conn.fileno(), select.EPOLLIN)
         # new client connection fd be initilized
         self.setFd(conn)
-        self.conn_state[conn.fileno()].state = self.smtup[1]
+        self.conn_state[conn.fileno()].state = 1
         # now end of accept, but the main process still on 'accept' status
         # waiting for new client to connect it.
         # dbgPrint("\n -- accept end!")
@@ -200,19 +200,19 @@ class nbNet(nbNetBase):
             read_ret = self.read(fd)
         except (Exception), msg:
             # dbgPrint(msg)
-            read_ret = self.smtup[4]
-        if read_ret == self.smtup[3]:
+            read_ret = 4
+        if read_ret == 3:
             # recv complete, change state to process it
-            # sock_state.state = self.smtup[3]
+            # sock_state.state = 3
             self.process(fd)
-        elif read_ret == self.smtup[7]:
+        elif read_ret == 7:
             pass
-        elif read_ret == self.smtup[8]:
+        elif read_ret == 8:
             pass
-        elif read_ret == self.smtup[9]:
+        elif read_ret == 9:
             pass
-        elif read_ret == self.smtup[4]:
-            self.conn_state[fd].state = self.smtup[4]
+        elif read_ret == 4:
+            self.conn_state[fd].state = 4
             # closing directly when error.
             self.state_machine(fd)
         else:
@@ -223,19 +223,19 @@ class nbNet(nbNetBase):
         try:
             write_ret = self.write(fd)
         except socket.error, msg:
-            write_ret = self.smtup[4]
+            write_ret = 4
 
-        if write_ret == self.smtup[6]:
+        if write_ret == 6:
             pass
-        elif write_ret == self.smtup[5]:
+        elif write_ret == 5:
             sock_state = self.conn_state[fd]
             conn = sock_state.sock_obj
             self.setFd(conn)
-            self.conn_state[fd].state = self.smtup[1]
+            self.conn_state[fd].state = 1
             self.epoll_sock.modify(fd, select.EPOLLIN)
-        elif write_ret == self.smtup[4]:
+        elif write_ret == 4:
             # dbgPrint(msg)
-            self.conn_state[fd].state = self.smtup[4]
+            self.conn_state[fd].state = 4
             # closing directly when error.
             self.state_machine(fd)
 
