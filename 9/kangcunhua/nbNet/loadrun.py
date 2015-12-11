@@ -3,14 +3,14 @@
 # @Author: Kang.Cunhua
 # @Date:   2015-12-06 14:19:45
 # @Last Modified by:   Kang.Cunhua
-# @Last Modified time: 2015-12-06 14:20:53
+# @Last Modified time: 2015-12-11 16:03:21
 
 import socket
 import sys
 import os
 
 HOST = '127.0.0.1'
-PORT = 9099
+PORT = 60006
 CNT = int(sys.argv[2])
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

@@ -3,7 +3,7 @@
 # @Author: Kang.Cunhua
 # @Date:   2015-12-06 14:19:45
 # @Last Modified by:   Kang.Cunhua
-# @Last Modified time: 2015-12-06 14:21:01
+# @Last Modified time: 2015-12-11 19:18:13
 
 from daemon import Daemon
 import socket
@@ -134,7 +134,7 @@ def sendData(sock_l, host, port, data):
 class STATE:
 
     def __init__(self):
-        self.state = "accept"
+        self.state = 0  # smtup[0]
         self.have_read = 0
         self.need_read = 10
         self.have_write = 0
