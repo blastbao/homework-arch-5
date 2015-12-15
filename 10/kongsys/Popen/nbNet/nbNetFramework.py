@@ -184,8 +184,9 @@ class nbNet(nbNetBase):
 
     def processRPC(self, fd):
         sock_state = self.conn_state[fd]
-        sock_state.subp_obj = self.logic(sock_state.buff_read, fd)
-        sock_state.state = "writeend"
+        #sock_state.subp_obj = self.logic(sock_state.buff_read, fd)
+        self.logic(sock_state, fd)
+        #sock_state.state = "writeend"
         self.epoll_sock.modify(fd, select.EPOLLOUT)
 
     def process(self, fd):
