@@ -1,0 +1,4 @@
+d665d9f2881d4918008e4c2db08393b9  ./bin/reboot_test_online_main
+ea9c6cf47f7fee6c1ba795b87cbdb85f  ./script/start
+64eaeb59371f3d991f8cd6ae1318d0d9  ./script/status
+a970e8d95a2783e624099c1f9e325853  ./script/stop
