@@ -98,7 +98,7 @@ class nbNetBase:
     def write(self, fd):
         sock_state = self.conn_state[fd]
         conn = sock_state.sock_obj
-        pdb.set_trace()
+        #pdb.set_trace()
         if isinstance(sock_state.popen_pipe,file):
             try:
                 output = sock_state.popen_pipe.read()
