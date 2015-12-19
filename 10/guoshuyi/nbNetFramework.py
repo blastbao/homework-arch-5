@@ -127,14 +127,19 @@ class nbNetBase:
             epoll_list = self.epoll_sock.poll()
             for fd, events in epoll_list:
                 #dbgPrint('\n-- run epoll return fd: %d. event: %s' % (fd, events))
-                sock_state = self.conn_state[fd]
-                if select.EPOLLHUP & events:
-                    #dbgPrint("EPOLLHUP")
-                    sock_state.state = "closing"
-                elif select.EPOLLERR & events:
-                    #dbgPrint("EPOLLERR")
-                    sock_state.state = "closing"
-                self.state_machine(fd)
+                try:
+                    sock_state = self.conn_state[fd]
+                    if select.EPOLLHUP & events:
+                        #dbgPrint("EPOLLHUP")
+                        sock_state.state = "closing"
+                    elif select.EPOLLERR & events:
+                        #dbgPrint("EPOLLERR")
+                        sock_state.state = "closing"
+                    self.state_machine(fd)
+                except KeyError as e:
+                    if e == 5:
+                        self.epoll_sock.unregister(fd)
+                        self.conn_state.pop(fd)
 
     def state_machine(self, fd):
         #time.sleep(0.1)
