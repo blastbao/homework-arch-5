@@ -256,7 +256,6 @@ class nbNet(nbNetBase):
                  except socket.error:
                      self.conn_state[fd].state = 'closing'
 
-
 counter = 0
 if __name__ == '__main__':
 
