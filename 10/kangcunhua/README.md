@@ -28,10 +28,63 @@
 4. nbNetBase类中 write方法：如果 pipe，则直接转换为 "writecomplete"
 5. 测试：
     1. 启动服务器： python rpc_demo.py
-    2. 启动客户端： echo "0000000002ls" | nc 127.0.0.1 9079
-    3. 启动客户端： echo "0000000027hostname&&sleep 5&&hostname" | nc 127.0.0.1 9079
+    2. 启动客户端： echo -n "0000000002ls" | nc 127.0.0.1 9079
+    3. 启动客户端： echo -n "0000000027hostname&&sleep 5&&hostname" | nc 127.0.0.1 9079
     4. 或者 启动客户端： python loadrun.py ls 10
     5. enjoy your self！
+6. update:2015.12.23 修复close时服务器端异常退出的缺陷；
+    1. 根据课上的讲解，彻底修复close时报异常的缺陷：先unregister，再close就搞定了。
+    2. 在ctrl +c 或ctrl + \ 终止 agent 程序时，服务器端 会关闭agent链接， 保持socket，等待 客户端agent 的再次 连接
+    2. 原思路是将状态机流转到writecomplate之后就再次read，长连接，不触发close方法
+    3. 按照原思路，在ctrl +c 或ctrl + \ 终止 agent程序时，服务器端 报异常退出，长连接关闭 触发close方法，报一个异常，不能算最终修复缺陷；
+    4. 原思路写的代码 其余部分 运行正常，只是逻辑上略微 多绕了两个状态函数。
+    5. 最新的修复 逻辑上的 多走俩状态的 问题 在下一次作业 提交。这个保留自己的解决办法。 
+
+###关于之前的异常
+```python
+ - state of fd: 5
+154 
+ - current state of fd: 5
+155  - - state: write
+156  - - have_read: 0
+157  - - need_read: 10
+158  - - have_write: 0
+159  - - need_write: 0
+160  - - buff_write: 
+161  - - buff_read:  
+162  - - sock_obj:   <socket._socketobject object at 0x7f29f4e5d9f0>
+165  - - popen_pipe:   1
+140 
+-- run epoll return fd: 5. event: 25
+143 EPOLLHUP
+152 
+ - state machine: fd: 5, status: closing
+50 Close fd: 5 abnormal
+132 
+run func loop:
+135 
+ - state of fd: 3
+154 
+ - current state of fd: 3
+155  - - state: accept
+156  - - have_read: 0
+157  - - need_read: 10
+158  - - have_write: 0
+159  - - need_write: 0
+160  - - buff_write: 
+161  - - buff_read:  
+162  - - sock_obj:   <socket._socketobject object at 0x7f29f4e5d980>
+165  - - popen_pipe:   0
+140 
+-- run epoll return fd: 5. event: 25
+Traceback (most recent call last):
+  File "rpc_demo.py", line 20, in <module>
+    reverseD.run()
+  File "/home/kang/arch-5/rebootMon/collector/../nbNet/nbNetFramework.py", line 141, in run
+    sock_state = self.conn_state[fd]
+KeyError: 5
+>>study:/home/kang/arch-5/rebootMon/collector>
+```
 
 ###思路2：
 1. 使用文件中转

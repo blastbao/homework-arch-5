@@ -37,11 +37,13 @@ class nbNetBase:
 
     def close(self, fd):
         """fd is fileno() of socket"""
+        # pdb.set_trace()
+        print "closing", fd, self.conn_state
         try:
             # cancel of listen to event
             sock = self.conn_state[fd].sock_obj
-            sock.close()
             self.epoll_sock.unregister(fd)
+            sock.close()
             self.conn_state.pop(fd)
             tmp_pipe = self.popen_pipe
             self.popen_pipe = 0
@@ -49,8 +51,8 @@ class nbNetBase:
         except:
             dbgPrint("Close fd: %s abnormal" % fd)
             pass
-    #@profile
 
+    #@profile
     def read(self, fd):
         """fd is fileno() of socket"""
         # pdb.set_trace()
